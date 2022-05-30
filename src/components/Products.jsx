@@ -1,17 +1,51 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Product from './Product'
+import Pagination from './Pagination'
+import AddProduct from './AddProduct'
+import { Flex, Grid } from "@chakra-ui/react";
+import axios from 'axios'
+
+
 
 const Products = () => {
-  // TODO: Remove below const and instead import them from chakra
-  const Flex = () => <div />;
-  const Grid = () => <div />;
+
+
+  
+  const [data, setData] = useState([]);
+  
+  
+  useEffect(() => {
+    const data = async () => {
+      const response = await axios.get(
+        ' http://localhost:8080/products'
+        );
+        setData(response.data);
+      };
+      data();
+    }, []);
+
+
+    const handleOnAdding = () => {
+      axios.post("http://localhost:8080/products").then((r) => {
+        setData([...data, r.data]);
+      });
+    };
+    // TODO: Remove below const and instead import them from chakra
+  // const Flex = () => <div />;
+  // const Grid = () => <div />;
+
 
   return (
     <Flex>
-      {/*  AddProduct */}
-      <Grid>{/* List of Products */}</Grid>
-      {/* Pagination */}
+      <AddProduct adding={handleOnAdding} />
+      <Grid>{data.map((el) => (
+          <Product {...el} />
+        ))}</Grid>
+      <Pagination/>
     </Flex>
   );
 };
 
 export default Products;
+
+
